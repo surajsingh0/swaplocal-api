@@ -10,8 +10,9 @@ class UserSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
     distance = serializers.FloatField(read_only=True)
+    exchange_status = serializers.CharField(read_only=True)
 
     class Meta:
         model = Item
-        fields = ['id', 'title', 'description', 'image', 'owner', 'created_at', 'updated_at', 'distance']
-        read_only_fields = ['owner', 'created_at', 'updated_at', 'distance']
+        fields = ['id', 'title', 'description', 'image', 'owner', 'created_at', 'updated_at', 'distance', 'exchange_status']
+        read_only_fields = ['owner', 'created_at', 'updated_at', 'distance', 'exchange_status']
