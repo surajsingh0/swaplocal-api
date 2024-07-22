@@ -54,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'swaplocal.urls'
@@ -120,6 +122,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
+CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
