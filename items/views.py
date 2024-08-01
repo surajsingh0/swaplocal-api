@@ -5,6 +5,7 @@ from .models import Item
 from exchanges.models import Exchange
 from .serializers import ItemSerializer
 from .utils import calculate_distance
+from django.shortcuts import get_object_or_404
 
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
@@ -62,6 +63,70 @@ class ItemViewSet(viewsets.ModelViewSet):
 
         # Sort items by distance
         return sorted(items_with_distance, key=lambda x: x.distance)
+
+    # Future optimizations for pagination and own items
+    # def _get_own_items(self, user):
+    #     items = Item.objects.filter(owner=user).exclude(
+    #         id__in=self._get_completed_item_ids()
+    #     ).select_related('owner').annotate(
+    #         exchange_status=Subquery(
+    #             Exchange.objects.filter(
+    #                 Q(item_offered=OuterRef('pk')) | Q(item_requested=OuterRef('pk')),
+    #                 status__in=['pending', 'accepted']
+    #             ).values('status')[:1]
+    #         )
+    #     )
+    #     return items
+
+    # def _get_other_items(self, user):
+    #     if user.latitude is None or user.longitude is None:
+    #         return Item.objects.none()
+
+    #     excluded_item_ids = self._get_excluded_item_ids()
+
+    #     return Item.objects.exclude(
+    #         owner=user
+    #     ).exclude(
+    #         id__in=excluded_item_ids
+    #     ).select_related('owner').annotate(
+    #         distance=Sqrt(
+    #             Power(F('owner__latitude') - user.latitude, 2) +
+    #             Power(F('owner__longitude') - user.longitude, 2)
+    #         )
+    #     ).filter(
+    #         distance__lte=F('owner__max_distance')
+    #     ).order_by('distance')
+
+    # def _get_completed_item_ids(self):
+    #     return Exchange.objects.filter(
+    #         status='completed'
+    #     ).values_list('item_offered_id', 'item_requested_id')
+
+    # def _get_excluded_item_ids(self):
+    #     completed_item_ids = self._get_completed_item_ids()
+    #     active_item_ids = Exchange.objects.filter(
+    #         status__in=['pending', 'accepted']
+    #     ).values_list('item_offered_id', 'item_requested_id')
+    #     return set([item for sublist in completed_item_ids for item in sublist] +
+    #                [item for sublist in active_item_ids for item in sublist])
+
+    def get_object(self):
+        return get_object_or_404(Item, pk=self.kwargs.get('pk'))
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save()
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

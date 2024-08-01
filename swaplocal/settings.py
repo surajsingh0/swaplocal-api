@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'daphne',
     'channels',
+    'django_extensions',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -61,7 +62,7 @@ MIDDLEWARE = [
 
     'corsheaders.middleware.CorsMiddleware',
 
-    'notifications.middleware.NotificationMiddleware',
+    # 'notifications.middleware.NotificationMiddleware',
 ]
 
 ROOT_URLCONF = 'swaplocal.urls'
