@@ -31,8 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
-    'channels',
     'django_extensions',
 
     'django.contrib.admin',
@@ -48,7 +46,6 @@ INSTALLED_APPS = [
     'users',
     'items',
     'exchanges',
-    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -61,8 +58,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'corsheaders.middleware.CorsMiddleware',
-
-    # 'notifications.middleware.NotificationMiddleware',
 ]
 
 ROOT_URLCONF = 'swaplocal.urls'
@@ -95,17 +90,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-ASGI_APPLICATION = 'swaplocal.asgi.application'
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
