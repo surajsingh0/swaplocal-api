@@ -12,6 +12,11 @@ class ExchangeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Users can see exchanges they're involved in
         return Exchange.objects.filter(initiator=self.request.user) | Exchange.objects.filter(receiver=self.request.user)
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
     def perform_create(self, serializer):
         serializer.save(initiator=self.request.user)
