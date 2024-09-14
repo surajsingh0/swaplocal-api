@@ -32,6 +32,7 @@ Thumbs.db
 # Django static and media files
 /static/
 /media/
+/item_images/
 
 # Secret keys
 *.env
